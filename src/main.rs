@@ -1,4 +1,3 @@
-use chrono::{Duration, Utc};
 use clap::Parser;
 use colored::Colorize;
 use serde::Deserialize;
@@ -31,20 +30,34 @@ struct Args {
     /// ASN of the prefix owner (e.g. 65001)
     #[arg(long, required = true)]
     asn_mitigated: u32,
+}
 
-    /// Timeframe window in minutes to search BGP updates (default is 15 minutes)
-    #[arg(long, default_value = "15")]
-    timeframe: i64,
+/// Serde structs mapping JSON responses from the RIPEstat BGP-state API
+#[derive(Deserialize, Debug)]
+struct RipeStateResponse {
+    data: RipeStateData,
+}
+
+#[derive(Deserialize, Debug)]
+struct RipeStateData {
+    bgp_state: Vec<BgpRoute>,
+    timestamp: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct BgpRoute {
+    path: Vec<u32>,
+    source_id: String,
 }
 
 /// Serde structs mapping JSON responses from the RIPEstat BGP-updates API
 #[derive(Deserialize, Debug)]
-struct RipeResponse {
-    data: RipeData,
+struct RipeUpdatesResponse {
+    data: RipeUpdatesData,
 }
 
 #[derive(Deserialize, Debug)]
-struct RipeData {
+struct RipeUpdatesData {
     updates: Vec<BgpUpdate>,
 }
 
@@ -82,67 +95,93 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.asn_mitigation, args.asn_mitigated
     );
 
-    // Calculate the start time based on the timeframe window
-    let start_time = Utc::now() - Duration::minutes(args.timeframe);
-    let start_time_str = start_time.format("%Y-%m-%dT%H:%M:%S").to_string();
-
-    println!(
-        "Querying BGP updates since (UTC): {}\n",
-        start_time_str.blue()
-    );
-
-    // Call RIPE NCC RIS API for BGP updates over the timeframe window
-    let url = format!(
-        "https://stat.ripe.net/data/bgp-updates/data.json?resource={}&starttime={}",
-        args.prefix, start_time_str
-    );
-
     let client = reqwest::Client::new();
-    let res = client
-        .get(&url)
+
+    // 1. Fetch the BGP baseline state (the most recent full RIB dump)
+    println!("{}", "Fetching BGP state baseline...".blue());
+    let state_url = format!(
+        "https://stat.ripe.net/data/bgp-state/data.json?resource={}",
+        args.prefix
+    );
+    let state_res = client
+        .get(&state_url)
         .header("User-Agent", "lgview-ng/1.0 (https://ispfocus.net.br)")
         .send()
         .await?;
 
-    if !res.status().is_success() {
+    if !state_res.status().is_success() {
         eprintln!(
             "{}",
-            format!("Error: RIPEstat API returned HTTP status {}", res.status()).red()
+            format!("Error: RIPEstat API returned HTTP status {} for state request", state_res.status()).red()
         );
         std::process::exit(1);
     }
 
-    let ripe_data: RipeResponse = res.json().await?;
-    let updates = ripe_data.data.updates;
+    let state_data: RipeStateResponse = state_res.json().await?;
+    let baseline_timestamp = state_data.data.timestamp;
 
-    // Filter to obtain only the latest announcement state per peer (source_id)
-    // Map: source_id -> Option<Vec<u32>> (None if last update is a withdrawal, Some(path) if announcement)
-    let mut latest_peer_states: HashMap<String, Option<Vec<u32>>> = HashMap::new();
+    // Load active paths from state baseline
+    // Map: source_id -> path
+    let mut peer_paths: HashMap<String, Vec<u32>> = HashMap::new();
+    for route in state_data.data.bgp_state {
+        peer_paths.insert(route.source_id, route.path);
+    }
 
-    for update in &updates {
-        if let Some(ref attrs) = update.attrs {
+    println!(
+        "Loaded {} active baseline paths (snapshot from {} UTC).",
+        peer_paths.len().to_string().cyan(),
+        baseline_timestamp.green()
+    );
+
+    // 2. Fetch the BGP updates since the baseline timestamp up to now
+    println!("{}", "Fetching BGP updates for real-time adjustments...".blue());
+    let updates_url = format!(
+        "https://stat.ripe.net/data/bgp-updates/data.json?resource={}&starttime={}",
+        args.prefix, baseline_timestamp
+    );
+    let updates_res = client
+        .get(&updates_url)
+        .header("User-Agent", "lgview-ng/1.0 (https://ispfocus.net.br)")
+        .send()
+        .await?;
+
+    if !updates_res.status().is_success() {
+        eprintln!(
+            "{}",
+            format!("Error: RIPEstat API returned HTTP status {} for updates request", updates_res.status()).red()
+        );
+        std::process::exit(1);
+    }
+
+    let updates_data: RipeUpdatesResponse = updates_res.json().await?;
+    let updates = updates_data.data.updates;
+
+    println!(
+        "Processing {} BGP updates for real-time corrections.",
+        updates.len().to_string().cyan()
+    );
+
+    // Apply BGP updates incrementally on top of the baseline
+    for update in updates {
+        if let Some(attrs) = update.attrs {
             if update.update_type == "A" {
-                if let Some(ref path) = attrs.path {
-                    latest_peer_states.insert(attrs.source_id.clone(), Some(path.clone()));
+                // If it is an announcement, insert or overwrite path
+                if let Some(path) = attrs.path {
+                    peer_paths.insert(attrs.source_id, path);
                 }
             } else if update.update_type == "W" {
-                latest_peer_states.insert(attrs.source_id.clone(), None);
+                // If it is a withdrawal, remove the path
+                peer_paths.remove(&attrs.source_id);
             }
         }
     }
 
-    // Keep only active BGP paths (filtering out peers whose latest state is withdrawal)
-    let active_paths: Vec<(String, Vec<u32>)> = latest_peer_states
-        .into_iter()
-        .filter_map(|(source_id, path_opt)| path_opt.map(|path| (source_id, path)))
-        .collect();
+    // Convert peer paths back to a sorted list
+    let mut active_paths: Vec<(String, Vec<u32>)> = peer_paths.into_iter().collect();
+    active_paths.sort_by(|a, b| a.0.cmp(&b.0));
 
     if active_paths.is_empty() {
-        println!(
-            "{}",
-            "No active BGP announcements found for this prefix in the last query window."
-                .yellow()
-        );
+        println!("{}", "No active BGP routing paths found for this prefix.".yellow());
         return Ok(());
     }
 
@@ -159,18 +198,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let status_width = 20;
 
-    // Print table header
-    println!(
-        "{:<source_width$} | {:<status_width$} | {}",
-        "Source ID (RRC)",
-        "Status",
-        "AS-PATH",
-        source_width = max_source_id_len,
-        status_width = status_width
-    );
+    println!("\n{:<source_width$} | {:<status_width$} | {}", "Source ID (RRC)", "Status", "AS-PATH", source_width = max_source_id_len, status_width = status_width);
     println!("{}", "-".repeat(max_source_id_len + status_width + 6 + 25));
 
-    // Iterate through BGP routing paths gathered from updates
+    // Iterate through computed active BGP paths
     for (source_id, path) in active_paths {
         let path_len = path.len();
         // Check if the AS-PATH ends with: <asn_mitigation> <asn_mitigated>

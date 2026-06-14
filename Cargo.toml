@@ -1,6 +1,6 @@
 [package]
 name = "lgview-ng"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2024"
 authors = ["Gondim <gondimcodes@gmail.com>"]
 description = "Check for BGP prefix leaks in DDoS mitigation setups using the RIPEstat BGP state API"

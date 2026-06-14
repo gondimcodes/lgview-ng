@@ -13,7 +13,11 @@ Any path that announces the prefix but does not flow through the DDoS scrubbing 
 
 ## Features
 
-- **Global High-Precision Verification**: Instead of querying a static list of Looking Glasses (which can be slow, unreliable, or require credentials), `lgview-ng` queries the **RIPE NCC Routing Information Service (RIS) API**. This aggregates current routing tables from dozens of Route Collectors (RRCs) globally.
+- **Global High-Precision Verification**: Instead of querying a static list of Looking Glasses (which can be slow, unreliable, or require credentials), `lgview-ng` queries the **RIPE NCC Routing Information Service (RIS) API**. 
+  It uses a **hybrid verification model**:
+  1. It fetches the BGP baseline state (the most recent full RIB dump) for global coverage.
+  2. It queries all BGP updates since that dump up to the current second to apply real-time announcements (`A`) and withdrawals (`W`).
+  This achieves real-time precision without missing inactive but stable announcements.
 - **Dynamic Alignment**: Terminal table layout is calculated dynamically to format and align long IPv6 collector addresses and AS-paths cleanly.
 - **CLI Automation**: Returns exit code `1` when leaks are detected, enabling integration with CI/CD pipelines, cron jobs, and alerting systems.
 - **Rich Visual Output**: Features colorized output (green for valid paths, red for anomalous leaks) and a custom startup banner.
@@ -22,10 +26,12 @@ Any path that announces the prefix but does not flow through the DDoS scrubbing 
 
 ## Data Source
 
-The tool fetches real-time BGP routing state from the RIPEstat API:
-`https://stat.ripe.net/data/bgp-state/data.json`
+The tool fetches real-time BGP routing state and updates from the RIPEstat APIs:
+- `https://stat.ripe.net/data/bgp-state/data.json`
+- `https://stat.ripe.net/data/bgp-updates/data.json`
 
 This ensures that we observe the prefix advertisements from multiple independent BGP peers worldwide simultaneously.
+
 
 ---
 
@@ -71,7 +77,7 @@ $$ |     $$ |  $$ |  \$$$  /    $$ |  $$ |      $$$  / \$$$ |        $$ |\$$$ |$
 $$$$$$$$\\$$$$$$  |   \$  /   $$$$$$\ $$$$$$$$\ $$  /   \$$ |        $$ | \$$ |\$$$$$$  |
 \________|\______/     \_/    \______|\________|\__/     \__|        \__|  \__| \______/ 
 https://ispfocus.net.br
-Version: 1.0.0
+Version: 1.1.0
 
 Checking prefix: 193.0.0.0/21
 Expected ending path: 1273 3333
