@@ -1,6 +1,8 @@
+use chrono::{Duration, Utc};
 use clap::Parser;
 use colored::Colorize;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 // ASCII Art banner displayed on execution
 const BANNER: &str = r#"
@@ -29,9 +31,13 @@ struct Args {
     /// ASN of the prefix owner (e.g. 65001)
     #[arg(long, required = true)]
     asn_mitigated: u32,
+
+    /// Timeframe window in minutes to search BGP updates (default is 15 minutes)
+    #[arg(long, default_value = "15")]
+    timeframe: i64,
 }
 
-/// Serde structs mapping JSON responses from the RIPEstat BGP-state API
+/// Serde structs mapping JSON responses from the RIPEstat BGP-updates API
 #[derive(Deserialize, Debug)]
 struct RipeResponse {
     data: RipeData,
@@ -39,15 +45,20 @@ struct RipeResponse {
 
 #[derive(Deserialize, Debug)]
 struct RipeData {
-    bgp_state: Vec<BgpRoute>,
+    updates: Vec<BgpUpdate>,
 }
 
 #[derive(Deserialize, Debug)]
-struct BgpRoute {
-    #[serde(rename = "target_prefix")]
-    _target_prefix: String,
-    path: Vec<u32>,
+struct BgpUpdate {
+    #[serde(rename = "type")]
+    update_type: String, // "A" for announcements, "W" for withdrawals
+    attrs: Option<BgpUpdateAttrs>,
+}
+
+#[derive(Deserialize, Debug)]
+struct BgpUpdateAttrs {
     source_id: String,
+    path: Option<Vec<u32>>,
 }
 
 /// Prints the ASCII Art banner, the product URL, and the Cargo project version
@@ -71,10 +82,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.asn_mitigation, args.asn_mitigated
     );
 
-    // Call RIPE NCC RIS API for current BGP routing states
+    // Calculate the start time based on the timeframe window
+    let start_time = Utc::now() - Duration::minutes(args.timeframe);
+    let start_time_str = start_time.format("%Y-%m-%dT%H:%M:%S").to_string();
+
+    println!(
+        "Querying BGP updates since (UTC): {}\n",
+        start_time_str.blue()
+    );
+
+    // Call RIPE NCC RIS API for BGP updates over the timeframe window
     let url = format!(
-        "https://stat.ripe.net/data/bgp-state/data.json?resource={}",
-        args.prefix
+        "https://stat.ripe.net/data/bgp-updates/data.json?resource={}&starttime={}",
+        args.prefix, start_time_str
     );
 
     let client = reqwest::Client::new();
@@ -93,10 +113,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let ripe_data: RipeResponse = res.json().await?;
-    let routes = ripe_data.data.bgp_state;
+    let updates = ripe_data.data.updates;
 
-    if routes.is_empty() {
-        println!("{}", "No BGP routes found for this prefix.".yellow());
+    // Filter to obtain only the latest announcement state per peer (source_id)
+    // Map: source_id -> Option<Vec<u32>> (None if last update is a withdrawal, Some(path) if announcement)
+    let mut latest_peer_states: HashMap<String, Option<Vec<u32>>> = HashMap::new();
+
+    for update in &updates {
+        if let Some(ref attrs) = update.attrs {
+            if update.update_type == "A" {
+                if let Some(ref path) = attrs.path {
+                    latest_peer_states.insert(attrs.source_id.clone(), Some(path.clone()));
+                }
+            } else if update.update_type == "W" {
+                latest_peer_states.insert(attrs.source_id.clone(), None);
+            }
+        }
+    }
+
+    // Keep only active BGP paths (filtering out peers whose latest state is withdrawal)
+    let active_paths: Vec<(String, Vec<u32>)> = latest_peer_states
+        .into_iter()
+        .filter_map(|(source_id, path_opt)| path_opt.map(|path| (source_id, path)))
+        .collect();
+
+    if active_paths.is_empty() {
+        println!(
+            "{}",
+            "No active BGP announcements found for this prefix in the last query window."
+                .yellow()
+        );
         return Ok(());
     }
 
@@ -104,9 +150,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut valid_count = 0;
 
     // Calculate maximum length of Source ID dynamically to ensure perfect alignment
-    let max_source_id_len = routes
+    let max_source_id_len = active_paths
         .iter()
-        .map(|r| r.source_id.len())
+        .map(|(source_id, _)| source_id.len())
         .max()
         .unwrap_or(25)
         .max(25); // Minimum width of 25 to match header
@@ -124,19 +170,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     println!("{}", "-".repeat(max_source_id_len + status_width + 6 + 25));
 
-    // Iterate through BGP routing paths gathered from global collectors
-    for route in routes {
-        let path_len = route.path.len();
+    // Iterate through BGP routing paths gathered from updates
+    for (source_id, path) in active_paths {
+        let path_len = path.len();
         // Check if the AS-PATH ends with: <asn_mitigation> <asn_mitigated>
         let is_valid = if path_len >= 2 {
-            route.path[path_len - 2] == args.asn_mitigation
-                && route.path[path_len - 1] == args.asn_mitigated
+            path[path_len - 2] == args.asn_mitigation && path[path_len - 1] == args.asn_mitigated
         } else {
             false
         };
 
-        let path_str = route
-            .path
+        let path_str = path
             .iter()
             .map(|asn| asn.to_string())
             .collect::<Vec<String>>()
@@ -146,7 +190,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             valid_count += 1;
             println!(
                 "{:<source_width$} | {:<status_width$} | {}",
-                route.source_id,
+                source_id,
                 "VALID".green().bold(),
                 path_str.green(),
                 source_width = max_source_id_len,
@@ -156,7 +200,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             leaks_count += 1;
             println!(
                 "{:<source_width$} | {:<status_width$} | {}",
-                route.source_id,
+                source_id,
                 "LEAK / ANOMALOUS".red().bold(),
                 path_str.red(),
                 source_width = max_source_id_len,
