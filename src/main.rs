@@ -1,7 +1,11 @@
 use clap::Parser;
 use colored::Colorize;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::fs;
+use std::net::{TcpStream, ToSocketAddrs};
+use std::thread;
+use std::time::Duration;
+use tokio::task;
 
 // ASCII Art banner displayed on execution
 const BANNER: &str = r#"
@@ -17,7 +21,7 @@ $$$$$$$$\\$$$$$$  |   \$  /   $$$$$$\ $$$$$$$$\ $$  /   \$$ |        $$ | \$$ |\
 /// Command line arguments struct managed by Clap
 #[derive(Parser, Debug)]
 #[command(name = "lgview-ng")]
-#[command(about = "Checks for BGP prefix leaks in DDoS mitigation setups", long_about = None)]
+#[command(about = "Checks for BGP prefix leaks in DDoS mitigation setups using Looking Glass servers", long_about = None)]
 struct Args {
     /// The IP prefix to check (IPv4 /24 or IPv6 /48)
     #[arg(long, required = true)]
@@ -30,51 +34,156 @@ struct Args {
     /// ASN of the prefix owner (e.g. 65001)
     #[arg(long, required = true)]
     asn_mitigated: u32,
+
+    /// Path to config TOML file (defaults to config.toml)
+    #[arg(long, default_value = "config.toml")]
+    config: String,
 }
 
-/// Serde structs mapping JSON responses from the RIPEstat BGP-state API
-#[derive(Deserialize, Debug)]
-struct RipeStateResponse {
-    data: RipeStateData,
+#[derive(Deserialize, Debug, Clone)]
+struct Config {
+    looking_glasses: Vec<LookingGlassConfig>,
 }
 
-#[derive(Deserialize, Debug)]
-struct RipeStateData {
-    bgp_state: Vec<BgpRoute>,
-    timestamp: String,
+#[derive(Deserialize, Debug, Clone)]
+struct LookingGlassConfig {
+    name: String,
+    host: String,
+    is_route_views: bool,
 }
 
-#[derive(Deserialize, Debug)]
-struct BgpRoute {
-    path: Vec<u32>,
-    source_id: String,
+#[derive(Debug, Clone)]
+struct QueryResult {
+    lg_name: String,
+    as_paths: Vec<Vec<u32>>,
+    error: Option<String>,
 }
 
-/// Serde structs mapping JSON responses from the RIPEstat BGP-updates API
-#[derive(Deserialize, Debug)]
-struct RipeUpdatesResponse {
-    data: RipeUpdatesData,
+/// Helper function to perform clean reading from Telnet stream until prompt appears
+fn read_until_telnet(stream: &mut telnet::Telnet, expected: &str, timeout: Duration) -> Result<String, String> {
+    let mut buffer = Vec::new();
+    let start_time = std::time::Instant::now();
+
+    loop {
+        if start_time.elapsed() > timeout {
+            return Err(format!("Timeout reading from Telnet. Expected suffix: '{}'", expected));
+        }
+
+        match stream.read_nonblocking() {
+            Ok(telnet::Event::Data(data)) => {
+                buffer.extend_from_slice(&data);
+                let current_str = String::from_utf8_lossy(&buffer);
+                if current_str.contains(expected) {
+                    return Ok(current_str.into_owned());
+                }
+            }
+            Ok(telnet::Event::TimedOut) => {
+                thread::sleep(Duration::from_millis(50));
+            }
+            Ok(_) => {}
+            Err(e) => return Err(format!("Telnet read error: {}", e)),
+        }
+    }
 }
 
-#[derive(Deserialize, Debug)]
-struct RipeUpdatesData {
-    updates: Vec<BgpUpdate>,
+/// Helper to parse CLI output from show ip bgp and extract AS paths ending with target AS
+fn extract_as_paths(output: &str, target_origin: u32) -> Vec<Vec<u32>> {
+    let mut paths = Vec::new();
+    let target_str = target_origin.to_string();
+
+    for line in output.lines() {
+        if line.contains(&target_str) {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.is_empty() {
+                continue;
+            }
+
+            let mut current_path = Vec::new();
+            for part in &parts {
+                if part.contains(':') {
+                    continue;
+                }
+                let clean_part = part.trim_matches(|c: char| !c.is_numeric());
+                if let Ok(asn) = clean_part.parse::<u32>() {
+                    current_path.push(asn);
+                } else if !current_path.is_empty() {
+                    break;
+                }
+            }
+
+            if !current_path.is_empty() && current_path.last() == Some(&target_origin) {
+                paths.push(current_path);
+            }
+        }
+    }
+
+    paths.sort();
+    paths.dedup();
+    paths
 }
 
-#[derive(Deserialize, Debug)]
-struct BgpUpdate {
-    #[serde(rename = "type")]
-    update_type: String, // "A" for announcements, "W" for withdrawals
-    attrs: Option<BgpUpdateAttrs>,
+/// Connects to a Cisco/IOS-like Looking Glass via Telnet, disables pagination, and queries bgp routes
+async fn query_telnet_lg(name: String, host: String, prefix: String, target_origin: u32, is_route_views: bool) -> QueryResult {
+    let name_clone = name.clone();
+    let name_err_clone = name.clone();
+    task::spawn_blocking(move || {
+        let addr = match format!("{}:23", host).to_socket_addrs() {
+            Ok(mut addrs) => match addrs.next() {
+                Some(a) => a,
+                None => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some("Could not resolve address".to_string()) }
+            },
+            Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("DNS Resolve error: {}", e)) }
+        };
+
+        let stream = match TcpStream::connect_timeout(&addr, Duration::from_secs(5)) {
+            Ok(s) => s,
+            Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Connection timeout/error: {}", e)) }
+        };
+
+        let boxed_stream: Box<dyn telnet::Stream> = Box::new(stream);
+        let mut telnet_client = telnet::Telnet::from_stream(boxed_stream, 2048);
+
+        if is_route_views {
+            if let Err(e) = read_until_telnet(&mut telnet_client, "Username:", Duration::from_secs(8)) {
+                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach login prompt: {}", e)) };
+            }
+            let _ = telnet_client.write(b"rviews\n");
+        }
+
+        let prompt_suffix = ">";
+        let output = match read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(10)) {
+            Ok(out) => out,
+            Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach prompt: {}", e)) }
+        };
+
+        let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views");
+
+        if is_cisco {
+            let _ = telnet_client.write(b"terminal length 0\n");
+            let _ = read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(3));
+        }
+
+        let query_cmd = format!("show ip bgp {}\n", prefix);
+        let _ = telnet_client.write(query_cmd.as_bytes());
+
+        match read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(15)) {
+            Ok(result) => {
+                let paths = extract_as_paths(&result, target_origin);
+                QueryResult {
+                    lg_name: name_clone,
+                    as_paths: paths,
+                    error: None,
+                }
+            }
+            Err(e) => QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Query read timeout/error: {}", e)) }
+        }
+    }).await.unwrap_or_else(|e| QueryResult {
+        lg_name: name_err_clone,
+        as_paths: Vec::new(),
+        error: Some(format!("Task execution failed: {}", e)),
+    })
 }
 
-#[derive(Deserialize, Debug)]
-struct BgpUpdateAttrs {
-    source_id: String,
-    path: Option<Vec<u32>>,
-}
-
-/// Prints the ASCII Art banner, the product URL, and the Cargo project version
 fn print_banner() {
     let version = env!("CARGO_PKG_VERSION");
     println!("{}", BANNER.cyan());
@@ -86,7 +195,6 @@ fn print_banner() {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     print_banner();
 
-    // Parse command line arguments
     let args = Args::parse();
 
     println!("Checking prefix: {}", args.prefix.yellow());
@@ -95,160 +203,129 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.asn_mitigation, args.asn_mitigated
     );
 
-    let client = reqwest::Client::new();
+    // Read and parse the config.toml file
+    println!("Loading configuration from: {}", args.config.blue());
+    let config_content = match fs::read_to_string(&args.config) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("{}", format!("Error: Failed to read config file '{}': {}", args.config, e).red());
+            std::process::exit(1);
+        }
+    };
 
-    // 1. Fetch the BGP baseline state (the most recent full RIB dump)
-    println!("{}", "Fetching BGP state baseline...".blue());
-    let state_url = format!(
-        "https://stat.ripe.net/data/bgp-state/data.json?resource={}",
-        args.prefix
-    );
-    let state_res = client
-        .get(&state_url)
-        .header("User-Agent", "lgview-ng/1.0 (https://ispfocus.net.br)")
-        .send()
-        .await?;
+    let config: Config = match toml::from_str(&config_content) {
+        Ok(cfg) => cfg,
+        Err(e) => {
+            eprintln!("{}", format!("Error: Failed to parse TOML configuration: {}", e).red());
+            std::process::exit(1);
+        }
+    };
 
-    if !state_res.status().is_success() {
-        eprintln!(
-            "{}",
-            format!("Error: RIPEstat API returned HTTP status {} for state request", state_res.status()).red()
-        );
-        std::process::exit(1);
+    println!("Initiating concurrent Looking Glass checks on {} servers...", config.looking_glasses.len().to_string().cyan());
+
+    // Create parallel tasks for each Looking Glass configured in config.toml
+    let mut futures = Vec::new();
+    for lg in config.looking_glasses {
+        let prefix = args.prefix.clone();
+        let target_origin = args.asn_mitigated;
+        futures.push(task::spawn(async move {
+            query_telnet_lg(lg.name, lg.host, prefix, target_origin, lg.is_route_views).await
+        }));
     }
 
-    let state_data: RipeStateResponse = state_res.json().await?;
-    let baseline_timestamp = state_data.data.timestamp;
-
-    // Load active paths from state baseline
-    // Map: source_id -> path
-    let mut peer_paths: HashMap<String, Vec<u32>> = HashMap::new();
-    for route in state_data.data.bgp_state {
-        peer_paths.insert(route.source_id, route.path);
+    // Await all futures concurrently
+    let results_raw = futures_util::future::join_all(futures).await;
+    let mut results = Vec::new();
+    for res in results_raw {
+        if let Ok(query_res) = res {
+            results.push(query_res);
+        }
     }
 
-    println!(
-        "Loaded {} active baseline paths (snapshot from {} UTC).",
-        peer_paths.len().to_string().cyan(),
-        baseline_timestamp.green()
-    );
+    let mut total_paths = 0;
+    let mut leaks_count = 0;
+    let mut valid_count = 0;
 
-    // 2. Fetch the BGP updates since the baseline timestamp up to now
-    println!("{}", "Fetching BGP updates for real-time adjustments...".blue());
-    let updates_url = format!(
-        "https://stat.ripe.net/data/bgp-updates/data.json?resource={}&starttime={}",
-        args.prefix, baseline_timestamp
-    );
-    let updates_res = client
-        .get(&updates_url)
-        .header("User-Agent", "lgview-ng/1.0 (https://ispfocus.net.br)")
-        .send()
-        .await?;
+    let lg_col_width = 25;
+    let status_width = 20;
 
-    if !updates_res.status().is_success() {
-        eprintln!(
-            "{}",
-            format!("Error: RIPEstat API returned HTTP status {} for updates request", updates_res.status()).red()
-        );
-        std::process::exit(1);
-    }
+    println!("\n{:<lg_width$} | {:<status_width$} | {}", "Looking Glass", "Status", "AS-PATH", lg_width = lg_col_width, status_width = status_width);
+    println!("{}", "-".repeat(lg_col_width + status_width + 6 + 35));
 
-    let updates_data: RipeUpdatesResponse = updates_res.json().await?;
-    let updates = updates_data.data.updates;
+    for res in results {
+        if let Some(err) = res.error {
+            println!(
+                "{:<lg_width$} | {:<status_width$} | {}",
+                res.lg_name,
+                "ERROR".yellow().bold(),
+                err.red(),
+                lg_width = lg_col_width,
+                status_width = status_width
+            );
+            continue;
+        }
 
-    println!(
-        "Processing {} BGP updates for real-time corrections.",
-        updates.len().to_string().cyan()
-    );
+        if res.as_paths.is_empty() {
+            println!(
+                "{:<lg_width$} | {:<status_width$} | {}",
+                res.lg_name,
+                "NO PATHS".yellow().bold(),
+                "No announcements containing target mitigated ASN found".bright_black(),
+                lg_width = lg_col_width,
+                status_width = status_width
+            );
+            continue;
+        }
 
-    // Apply BGP updates incrementally on top of the baseline
-    for update in updates {
-        if let Some(attrs) = update.attrs {
-            if update.update_type == "A" {
-                // If it is an announcement, insert or overwrite path
-                if let Some(path) = attrs.path {
-                    peer_paths.insert(attrs.source_id, path);
-                }
-            } else if update.update_type == "W" {
-                // If it is a withdrawal, remove the path
-                peer_paths.remove(&attrs.source_id);
+        for path in res.as_paths {
+            total_paths += 1;
+            let path_len = path.len();
+            let is_valid = if path_len >= 2 {
+                path[path_len - 2] == args.asn_mitigation && path[path_len - 1] == args.asn_mitigated
+            } else {
+                false
+            };
+
+            let path_str = path
+                .iter()
+                .map(|asn| asn.to_string())
+                .collect::<Vec<String>>()
+                .join(" ");
+
+            if is_valid {
+                valid_count += 1;
+                println!(
+                    "{:<lg_width$} | {:<status_width$} | {}",
+                    res.lg_name,
+                    "VALID".green().bold(),
+                    path_str.green(),
+                    lg_width = lg_col_width,
+                    status_width = status_width
+                );
+            } else {
+                leaks_count += 1;
+                println!(
+                    "{:<lg_width$} | {:<status_width$} | {}",
+                    res.lg_name,
+                    "LEAK / ANOMALOUS".red().bold(),
+                    path_str.red(),
+                    lg_width = lg_col_width,
+                    status_width = status_width
+                );
             }
         }
     }
 
-    // Convert peer paths back to a sorted list
-    let mut active_paths: Vec<(String, Vec<u32>)> = peer_paths.into_iter().collect();
-    active_paths.sort_by(|a, b| a.0.cmp(&b.0));
-
-    if active_paths.is_empty() {
-        println!("{}", "No active BGP routing paths found for this prefix.".yellow());
-        return Ok(());
-    }
-
-    let mut leaks_count = 0;
-    let mut valid_count = 0;
-
-    // Calculate maximum length of Source ID dynamically to ensure perfect alignment
-    let max_source_id_len = active_paths
-        .iter()
-        .map(|(source_id, _)| source_id.len())
-        .max()
-        .unwrap_or(25)
-        .max(25); // Minimum width of 25 to match header
-
-    let status_width = 20;
-
-    println!("\n{:<source_width$} | {:<status_width$} | {}", "Source ID (RRC)", "Status", "AS-PATH", source_width = max_source_id_len, status_width = status_width);
-    println!("{}", "-".repeat(max_source_id_len + status_width + 6 + 25));
-
-    // Iterate through computed active BGP paths
-    for (source_id, path) in active_paths {
-        let path_len = path.len();
-        // Check if the AS-PATH ends with: <asn_mitigation> <asn_mitigated>
-        let is_valid = if path_len >= 2 {
-            path[path_len - 2] == args.asn_mitigation && path[path_len - 1] == args.asn_mitigated
-        } else {
-            false
-        };
-
-        let path_str = path
-            .iter()
-            .map(|asn| asn.to_string())
-            .collect::<Vec<String>>()
-            .join(" ");
-
-        if is_valid {
-            valid_count += 1;
-            println!(
-                "{:<source_width$} | {:<status_width$} | {}",
-                source_id,
-                "VALID".green().bold(),
-                path_str.green(),
-                source_width = max_source_id_len,
-                status_width = status_width
-            );
-        } else {
-            leaks_count += 1;
-            println!(
-                "{:<source_width$} | {:<status_width$} | {}",
-                source_id,
-                "LEAK / ANOMALOUS".red().bold(),
-                path_str.red(),
-                source_width = max_source_id_len,
-                status_width = status_width
-            );
-        }
-    }
-
-    // Print final summary report
     println!("\n{}", "Summary Report:".bold());
-    println!("Total checked paths: {}", valid_count + leaks_count);
+    println!("Total checked paths: {}", total_paths);
     println!("Valid paths        : {}", valid_count.to_string().green());
     println!("Anomalous / Leaks  : {}", leaks_count.to_string().red());
 
-    // Exit with code 1 if any leak was found to assist automation integration
     if leaks_count > 0 {
         println!("\n{}", "WARNING: Prefix leaks detected!".red().bold());
+        std::process::exit(1);
+    } else if total_paths == 0 {
+        println!("\n{}", "WARNING: No active path advertisements checked.".yellow().bold());
         std::process::exit(1);
     } else {
         println!(

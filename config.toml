@@ -1,0 +1,19 @@
+[[looking_glasses]]
+name = "Route Views"
+host = "route-views.routeviews.org"
+is_route_views = true
+
+[[looking_glasses]]
+name = "IX.br São Paulo"
+host = "lg.sp.ptt.br"
+is_route_views = false
+
+[[looking_glasses]]
+name = "IX.br Rio de Janeiro"
+host = "lg.rj.ix.br"
+is_route_views = false
+
+[[looking_glasses]]
+name = "IX.br Fortaleza"
+host = "lg.ce.ix.br"
+is_route_views = false

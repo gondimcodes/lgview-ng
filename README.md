@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-GPL--2.0-blue.svg)](LICENSE)
 
-**lgview-ng** is a high-performance Rust tool designed to verify BGP routing advertisements and detect prefix leaks in DDoS mitigation environments.
+**lgview-ng** is a high-performance Rust tool designed to verify BGP routing advertisements and detect prefix leaks in DDoS mitigation environments in real-time.
 
 When an IPv4 `/24` or IPv6 `/48` prefix is placed under DDoS mitigation, it must be announced with a specific AS-PATH sequence ending in:
 $$\text{AS-PATH: } [\dots \text{any transit AS} \dots] \rightarrow \mathbf{ASN_{mitigation}} \rightarrow \mathbf{ASN_{mitigated}}$$
@@ -13,25 +13,33 @@ Any path that announces the prefix but does not flow through the DDoS scrubbing 
 
 ## Features
 
-- **Global High-Precision Verification**: Instead of querying a static list of Looking Glasses (which can be slow, unreliable, or require credentials), `lgview-ng` queries the **RIPE NCC Routing Information Service (RIS) API**. 
-  It uses a **hybrid verification model**:
-  1. It fetches the BGP baseline state (the most recent full RIB dump) for global coverage.
-  2. It queries all BGP updates since that dump up to the current second to apply real-time announcements (`A`) and withdrawals (`W`).
-  This achieves real-time precision without missing inactive but stable announcements.
+- **Real-Time Direct Verification**: The tool initiates concurrent, asynchronous TCP Telnet sessions directly to BGP Looking Glasses (Route Servers) to parse current active routing tables.
+- **Dynamic Configuration**: Looking Glass target servers, connection types, and parameters are defined in an external `config.toml` file, making it easy to add or remove servers without recompiling.
 - **Dynamic Alignment**: Terminal table layout is calculated dynamically to format and align long IPv6 collector addresses and AS-paths cleanly.
 - **CLI Automation**: Returns exit code `1` when leaks are detected, enabling integration with CI/CD pipelines, cron jobs, and alerting systems.
 - **Rich Visual Output**: Features colorized output (green for valid paths, red for anomalous leaks) and a custom startup banner.
 
 ---
 
-## Data Source
+## Configuration (`config.toml`)
 
-The tool fetches real-time BGP routing state and updates from the RIPEstat APIs:
-- `https://stat.ripe.net/data/bgp-state/data.json`
-- `https://stat.ripe.net/data/bgp-updates/data.json`
+Servers are defined dynamically in a local TOML file. For example:
 
-This ensures that we observe the prefix advertisements from multiple independent BGP peers worldwide simultaneously.
+```toml
+[[looking_glasses]]
+name = "Route Views"
+host = "route-views.routeviews.org"
+is_route_views = true
 
+[[looking_glasses]]
+name = "IX.br São Paulo"
+host = "lg.sp.ptt.br"
+is_route_views = false
+```
+
+- `name`: Display name used in report tables.
+- `host`: Hostname or IP address of the Looking Glass.
+- `is_route_views`: Flag indicating if the target is Route Views (which requires sending `rviews` as the initial username).
 
 ---
 
@@ -44,6 +52,7 @@ The tool requires three mandatory arguments:
 | `--prefix` | The IPv4 `/24` or IPv6 `/48` subnet under mitigation |
 | `--asn-mitigation` | The ASN of the DDoS mitigation provider (e.g., `264409` for Huge Networks) |
 | `--asn-mitigated` | The owner ASN of the prefix (e.g., your network ASN `65001`) |
+| `--config` | (Optional) Path to the configuration TOML file. Defaults to `config.toml` |
 
 ---
 
@@ -52,17 +61,18 @@ The tool requires three mandatory arguments:
 ### Run directly with Cargo
 ```bash
 cargo run -- \
-  --prefix 192.168.0.0/24 \
-  --asn-mitigation 264409 \
-  --asn-mitigated 65001
+  --prefix 177.11.98.0/24 \
+  --asn-mitigation 263009 \
+  --asn-mitigated 262875
 ```
 
 ### Run the installed binary
 ```bash
 lgview-ng \
-  --prefix 2001:db8::/48 \
-  --asn-mitigation 264409 \
-  --asn-mitigated 65001
+  --prefix 209.61.8.0/24 \
+  --asn-mitigation 53427 \
+  --asn-mitigated 53158 \
+  --config /path/to/config.toml
 ```
 
 ### Sample Output
@@ -79,21 +89,25 @@ $$$$$$$$\\$$$$$$  |   \$  /   $$$$$$\ $$$$$$$$\ $$  /   \$$ |        $$ | \$$ |\
 https://ispfocus.net.br
 Version: 1.1.0
 
-Checking prefix: 193.0.0.0/21
-Expected ending path: 1273 3333
+Checking prefix: 209.61.8.0/24
+Expected ending path: 53427 53158
 
-Source ID (RRC)           | Status               | AS-PATH
---------------------------------------------------------------------------------
-00-165.16.221.66          | VALID                | 37721 37468 1273 3333
-00-193.0.0.56             | VALID                | 3333 37468 1273 3333
-00-2001:1890:111d:1::63   | LEAK / ANOMALOUS     | 7018 3356 263009 3333
+Loading configuration from: config.toml
+Initiating concurrent Looking Glass checks on 4 servers...
+
+Looking Glass             | Status               | AS-PATH
+--------------------------------------------------------------------------------------
+Route Views               | VALID                | 3257 53427 53158
+IX.br São Paulo           | VALID                | 53427 53158
+IX.br Rio de Janeiro      | NO PATHS             | No announcements containing target mitigated ASN found
+IX.br Fortaleza           | NO PATHS             | No announcements containing target mitigated ASN found
 
 Summary Report:
-Total checked paths: 3
+Total checked paths: 2
 Valid paths        : 2
-Anomalous / Leaks  : 1
+Anomalous / Leaks  : 0
 
-WARNING: Prefix leaks detected!
+SUCCESS: All paths are correctly routed via the mitigation provider!
 ```
 
 ---
