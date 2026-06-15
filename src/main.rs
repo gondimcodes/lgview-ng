@@ -178,8 +178,30 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
 
         // Handle custom password prompt if specified
         if let Some(ref pass) = lg.password {
-            if let Err(e) = read_until_telnet(&mut telnet_client, "Password:", Duration::from_secs(8)) {
-                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach password prompt: {}", e)) };
+            let mut prompt_found = false;
+            let start_time = std::time::Instant::now();
+            let mut buffer = Vec::new();
+
+            while start_time.elapsed() < Duration::from_secs(15) {
+                match telnet_client.read_nonblocking() {
+                    Ok(telnet::Event::Data(data)) => {
+                        buffer.extend_from_slice(&data);
+                        let current_str = String::from_utf8_lossy(&buffer).to_lowercase();
+                        if current_str.contains("password:") {
+                            prompt_found = true;
+                            break;
+                        }
+                    }
+                    Ok(telnet::Event::TimedOut) => {
+                        thread::sleep(Duration::from_millis(50));
+                    }
+                    Ok(_) => {}
+                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Telnet read error: {}", e)) },
+                }
+            }
+
+            if !prompt_found {
+                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some("Failed to reach password prompt".to_string()) };
             }
             let _ = telnet_client.write(format!("{}\n", pass).as_bytes());
         }
