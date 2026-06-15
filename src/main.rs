@@ -49,7 +49,9 @@ struct Config {
 struct LookingGlassConfig {
     name: String,
     host: String,
-    is_route_views: bool,
+    username: Option<String>,
+    password: Option<String>,
+    prompt_suffix: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -123,11 +125,11 @@ fn extract_as_paths(output: &str, target_origin: u32) -> Vec<Vec<u32>> {
 }
 
 /// Connects to a Cisco/IOS-like Looking Glass via Telnet, disables pagination, and queries bgp routes
-async fn query_telnet_lg(name: String, host: String, prefix: String, target_origin: u32, is_route_views: bool) -> QueryResult {
-    let name_clone = name.clone();
-    let name_err_clone = name.clone();
+async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: u32) -> QueryResult {
+    let name_clone = lg.name.clone();
+    let name_err_clone = lg.name.clone();
     task::spawn_blocking(move || {
-        let addr = match format!("{}:23", host).to_socket_addrs() {
+        let addr = match format!("{}:23", lg.host).to_socket_addrs() {
             Ok(mut addrs) => match addrs.next() {
                 Some(a) => a,
                 None => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some("Could not resolve address".to_string()) }
@@ -140,33 +142,68 @@ async fn query_telnet_lg(name: String, host: String, prefix: String, target_orig
             Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Connection timeout/error: {}", e)) }
         };
 
+        // Box the stream to satisfy the Box<dyn Stream> parameter required by telnet crate
         let boxed_stream: Box<dyn telnet::Stream> = Box::new(stream);
         let mut telnet_client = telnet::Telnet::from_stream(boxed_stream, 2048);
 
-        if is_route_views {
-            if let Err(e) = read_until_telnet(&mut telnet_client, "Username:", Duration::from_secs(8)) {
-                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach login prompt: {}", e)) };
+        // Handle custom username prompt if specified
+        if let Some(ref user) = lg.username {
+            let mut prompt_found = false;
+            let start_time = std::time::Instant::now();
+            let mut buffer = Vec::new();
+
+            while start_time.elapsed() < Duration::from_secs(8) {
+                match telnet_client.read_nonblocking() {
+                    Ok(telnet::Event::Data(data)) => {
+                        buffer.extend_from_slice(&data);
+                        let current_str = String::from_utf8_lossy(&buffer);
+                        if current_str.contains("Username:") || current_str.contains("login:") {
+                            prompt_found = true;
+                            break;
+                        }
+                    }
+                    Ok(telnet::Event::TimedOut) => {
+                        thread::sleep(Duration::from_millis(50));
+                    }
+                    Ok(_) => {}
+                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Telnet read error: {}", e)) },
+                }
             }
-            let _ = telnet_client.write(b"rviews\n");
+
+            if !prompt_found {
+                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some("Failed to reach login prompt".to_string()) };
+            }
+            let _ = telnet_client.write(format!("{}\n", user).as_bytes());
         }
 
-        let prompt_suffix = ">";
-        let output = match read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(10)) {
+        // Handle custom password prompt if specified
+        if let Some(ref pass) = lg.password {
+            if let Err(e) = read_until_telnet(&mut telnet_client, "Password:", Duration::from_secs(8)) {
+                return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach password prompt: {}", e)) };
+            }
+            let _ = telnet_client.write(format!("{}\n", pass).as_bytes());
+        }
+
+        // Wait for first router prompt (defaulting to ">" if not customized)
+        let prompt = lg.prompt_suffix.unwrap_or_else(|| ">".to_string());
+        let output = match read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(10)) {
             Ok(out) => out,
             Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach prompt: {}", e)) }
         };
 
-        let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views");
+        // If host name contains ix.br or route-views, disable Cisco paging
+        let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views") || name_clone.contains("AT&T") || name_clone.contains("HE");
 
         if is_cisco {
             let _ = telnet_client.write(b"terminal length 0\n");
-            let _ = read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(3));
+            let _ = read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(3));
         }
 
+        // Query prefix
         let query_cmd = format!("show ip bgp {}\n", prefix);
         let _ = telnet_client.write(query_cmd.as_bytes());
 
-        match read_until_telnet(&mut telnet_client, prompt_suffix, Duration::from_secs(15)) {
+        match read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(15)) {
             Ok(result) => {
                 let paths = extract_as_paths(&result, target_origin);
                 QueryResult {
@@ -229,7 +266,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let prefix = args.prefix.clone();
         let target_origin = args.asn_mitigated;
         futures.push(task::spawn(async move {
-            query_telnet_lg(lg.name, lg.host, prefix, target_origin, lg.is_route_views).await
+            query_telnet_lg(lg, prefix, target_origin).await
         }));
     }
 
