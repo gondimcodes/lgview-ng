@@ -19,3 +19,9 @@ host = "lg.rj.ix.br"
 [[looking_glasses]]
 name = "IX.br Fortaleza"
 host = "lg.ce.ix.br"
+
+[[looking_glasses]]
+name = "AT&T Route Server"
+host = "route-server.ip.att.net"
+username = "rviews"
+password = "rviews"

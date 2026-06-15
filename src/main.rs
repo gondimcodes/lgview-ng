@@ -61,6 +61,27 @@ struct QueryResult {
     error: Option<String>,
 }
 
+/// Helper to read non-blocking from Telnet and automatically reply to negotiations
+fn read_nonblocking_negotiate(stream: &mut telnet::Telnet) -> Result<Option<Vec<u8>>, String> {
+    match stream.read_nonblocking() {
+        Ok(telnet::Event::Data(data)) => Ok(Some(data.into_vec())),
+        Ok(telnet::Event::Negotiation(action, opt)) => {
+            let reply = match action {
+                telnet::Action::Do => Some(telnet::Action::Wont),
+                telnet::Action::Will => Some(telnet::Action::Dont),
+                _ => None,
+            };
+            if let Some(reply_action) = reply {
+                let _ = stream.negotiate(&reply_action, opt);
+            }
+            Ok(None)
+        }
+        Ok(telnet::Event::TimedOut) => Ok(None),
+        Ok(_) => Ok(None),
+        Err(e) => Err(format!("Telnet read error: {}", e)),
+    }
+}
+
 /// Helper function to perform clean reading from Telnet stream until prompt appears
 fn read_until_telnet(stream: &mut telnet::Telnet, expected: &str, timeout: Duration) -> Result<String, String> {
     let mut buffer = Vec::new();
@@ -71,19 +92,18 @@ fn read_until_telnet(stream: &mut telnet::Telnet, expected: &str, timeout: Durat
             return Err(format!("Timeout reading from Telnet. Expected suffix: '{}'", expected));
         }
 
-        match stream.read_nonblocking() {
-            Ok(telnet::Event::Data(data)) => {
+        match read_nonblocking_negotiate(stream) {
+            Ok(Some(data)) => {
                 buffer.extend_from_slice(&data);
                 let current_str = String::from_utf8_lossy(&buffer);
                 if current_str.contains(expected) {
                     return Ok(current_str.into_owned());
                 }
             }
-            Ok(telnet::Event::TimedOut) => {
+            Ok(None) => {
                 thread::sleep(Duration::from_millis(50));
             }
-            Ok(_) => {}
-            Err(e) => return Err(format!("Telnet read error: {}", e)),
+            Err(e) => return Err(e),
         }
     }
 }
@@ -152,21 +172,20 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
             let start_time = std::time::Instant::now();
             let mut buffer = Vec::new();
 
-            while start_time.elapsed() < Duration::from_secs(8) {
-                match telnet_client.read_nonblocking() {
-                    Ok(telnet::Event::Data(data)) => {
+            while start_time.elapsed() < Duration::from_secs(15) {
+                match read_nonblocking_negotiate(&mut telnet_client) {
+                    Ok(Some(data)) => {
                         buffer.extend_from_slice(&data);
-                        let current_str = String::from_utf8_lossy(&buffer);
-                        if current_str.contains("Username:") || current_str.contains("login:") {
+                        let current_str = String::from_utf8_lossy(&buffer).to_lowercase();
+                        if current_str.contains("username:") || current_str.contains("login:") {
                             prompt_found = true;
                             break;
                         }
                     }
-                    Ok(telnet::Event::TimedOut) => {
+                    Ok(None) => {
                         thread::sleep(Duration::from_millis(50));
                     }
-                    Ok(_) => {}
-                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Telnet read error: {}", e)) },
+                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(e) },
                 }
             }
 
@@ -183,8 +202,8 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
             let mut buffer = Vec::new();
 
             while start_time.elapsed() < Duration::from_secs(15) {
-                match telnet_client.read_nonblocking() {
-                    Ok(telnet::Event::Data(data)) => {
+                match read_nonblocking_negotiate(&mut telnet_client) {
+                    Ok(Some(data)) => {
                         buffer.extend_from_slice(&data);
                         let current_str = String::from_utf8_lossy(&buffer).to_lowercase();
                         if current_str.contains("password:") {
@@ -192,11 +211,10 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
                             break;
                         }
                     }
-                    Ok(telnet::Event::TimedOut) => {
+                    Ok(None) => {
                         thread::sleep(Duration::from_millis(50));
                     }
-                    Ok(_) => {}
-                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Telnet read error: {}", e)) },
+                    Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(e) },
                 }
             }
 
