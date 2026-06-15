@@ -52,6 +52,8 @@ struct LookingGlassConfig {
     username: Option<String>,
     password: Option<String>,
     prompt_suffix: Option<String>,
+    cmd_template: Option<String>,
+    pager_cmd: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -231,16 +233,21 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
             Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach prompt: {}", e)) }
         };
 
-        // If host name contains ix.br or route-views, disable Cisco paging
-        let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views") || name_clone.contains("AT&T") || name_clone.contains("HE");
-
-        if is_cisco {
-            let _ = telnet_client.write(b"terminal length 0\n");
+        // Disable paging
+        if let Some(ref pager) = lg.pager_cmd {
+            let _ = telnet_client.write(format!("{}\n", pager).as_bytes());
             let _ = read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(3));
+        } else {
+            let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views") || name_clone.contains("AT&T") || name_clone.contains("HE");
+            if is_cisco {
+                let _ = telnet_client.write(b"terminal length 0\n");
+                let _ = read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(3));
+            }
         }
 
         // Query prefix
-        let query_cmd = format!("show ip bgp {}\n", prefix);
+        let cmd_tpl = lg.cmd_template.unwrap_or_else(|| "show ip bgp {prefix}".to_string());
+        let query_cmd = format!("{}\n", cmd_tpl.replace("{prefix}", &prefix));
         let _ = telnet_client.write(query_cmd.as_bytes());
 
         match read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(15)) {
