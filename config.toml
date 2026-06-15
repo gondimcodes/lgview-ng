@@ -2,28 +2,32 @@
 name = "Route Views"
 host = "route-views.routeviews.org"
 username = "rviews"
+template = "cisco"
 
 [[looking_glasses]]
 name = "HE Route Server"
 host = "route-server.he.net"
 password = "rviews"
+template = "cisco"
 
 [[looking_glasses]]
 name = "IX.br São Paulo"
 host = "lg.sp.ptt.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "IX.br Rio de Janeiro"
 host = "lg.rj.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "IX.br Fortaleza"
 host = "lg.ce.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "AT&T Route Server"
 host = "route-server.ip.att.net"
 username = "rviews"
 password = "rviews"
-cmd_template = "show route protocol bgp {prefix}"
-pager_cmd = "set cli screen-length 0"
+template = "juniper"

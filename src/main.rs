@@ -1,6 +1,8 @@
+mod config;
+
 use clap::Parser;
 use colored::Colorize;
-use serde::Deserialize;
+use config::{Config, LookingGlassConfig};
 use std::fs;
 use std::net::{TcpStream, ToSocketAddrs};
 use std::thread;
@@ -40,21 +42,7 @@ struct Args {
     config: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
-struct Config {
-    looking_glasses: Vec<LookingGlassConfig>,
-}
 
-#[derive(Deserialize, Debug, Clone)]
-struct LookingGlassConfig {
-    name: String,
-    host: String,
-    username: Option<String>,
-    password: Option<String>,
-    prompt_suffix: Option<String>,
-    cmd_template: Option<String>,
-    pager_cmd: Option<String>,
-}
 
 #[derive(Debug, Clone)]
 struct QueryResult {
@@ -227,26 +215,20 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
         }
 
         // Wait for first router prompt (defaulting to ">" if not customized)
-        let prompt = lg.prompt_suffix.unwrap_or_else(|| ">".to_string());
-        let output = match read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(10)) {
+        let prompt = lg.prompt_suffix.as_deref().unwrap_or(">").to_string();
+        let _output = match read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(10)) {
             Ok(out) => out,
             Err(e) => return QueryResult { lg_name: name_clone, as_paths: Vec::new(), error: Some(format!("Failed to reach prompt: {}", e)) }
         };
 
         // Disable paging
-        if let Some(ref pager) = lg.pager_cmd {
+        if let Some(pager) = lg.resolve_pager_cmd() {
             let _ = telnet_client.write(format!("{}\n", pager).as_bytes());
             let _ = read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(3));
-        } else {
-            let is_cisco = output.contains(">") || name_clone.contains("IX.br") || name_clone.contains("Route Views") || name_clone.contains("AT&T") || name_clone.contains("HE");
-            if is_cisco {
-                let _ = telnet_client.write(b"terminal length 0\n");
-                let _ = read_until_telnet(&mut telnet_client, &prompt, Duration::from_secs(3));
-            }
         }
 
         // Query prefix
-        let cmd_tpl = lg.cmd_template.unwrap_or_else(|| "show ip bgp {prefix}".to_string());
+        let cmd_tpl = lg.resolve_cmd_template();
         let query_cmd = format!("{}\n", cmd_tpl.replace("{prefix}", &prefix));
         let _ = telnet_client.write(query_cmd.as_bytes());
 

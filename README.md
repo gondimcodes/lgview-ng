@@ -29,17 +29,30 @@ Servers are defined dynamically in a local TOML file. For example:
 [[looking_glasses]]
 name = "Route Views"
 host = "route-views.routeviews.org"
-is_route_views = true
+username = "rviews"
+template = "cisco"
 
 [[looking_glasses]]
-name = "IX.br São Paulo"
-host = "lg.sp.ptt.br"
-is_route_views = false
+name = "AT&T Route Server"
+host = "route-server.ip.att.net"
+username = "rviews"
+password = "rviews"
+template = "juniper"
 ```
+
+### Configuration Options:
 
 - `name`: Display name used in report tables.
 - `host`: Hostname or IP address of the Looking Glass.
-- `is_route_views`: Flag indicating if the target is Route Views (which requires sending `rviews` as the initial username).
+- `username`: (Optional) Telnet username if required.
+- `password`: (Optional) Telnet password if required.
+- `prompt_suffix`: (Optional) Expected prompt suffix (e.g. `>` or `#`). Defaults to `>`.
+- `template`: (Optional) Predefined named query template. Options:
+  - `cisco` / `cisco_ipv4`: Resolves to command `show ip bgp {prefix}` and pager `terminal length 0`.
+  - `cisco_ipv6`: Resolves to command `show bgp ipv6 unicast {prefix}` and pager `terminal length 0`.
+  - `juniper` / `juniper_ipv4` / `juniper_ipv6`: Resolves to command `show route protocol bgp {prefix}` and pager `set cli screen-length 0`.
+- `cmd_template`: (Optional) Custom BGP command to send. Overrides `template`. Useful for other vendors.
+- `pager_cmd`: (Optional) Custom command to disable pagination/more prompts. Overrides `template`.
 
 ---
 
