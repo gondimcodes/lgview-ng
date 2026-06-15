@@ -9,12 +9,6 @@ host = "route-server.he.net"
 password = "rviews"
 
 [[looking_glasses]]
-name = "AT&T Route Server"
-host = "route-server.ip.att.net"
-username = "rviews"
-password = "rviews"
-
-[[looking_glasses]]
 name = "IX.br São Paulo"
 host = "lg.sp.ptt.br"
 
