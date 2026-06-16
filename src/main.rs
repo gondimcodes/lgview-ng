@@ -456,7 +456,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut leaks_count = 0;
     let mut valid_count = 0;
 
-    let lg_col_width = 25;
+    let mut lg_col_width = 25;
+    for res in &results {
+        if res.lg_name.len() > lg_col_width {
+            lg_col_width = res.lg_name.len();
+        }
+    }
     let status_width = 20;
 
     println!("\n{:<lg_width$} | {:<status_width$} | {}", "Looking Glass", "Status", "AS-PATH", lg_width = lg_col_width, status_width = status_width);
