@@ -51,6 +51,7 @@ template = "juniper"
   - `cisco` / `cisco_ipv4`: Resolves to command `show ip bgp {prefix}` and pager `terminal length 0`.
   - `cisco_ipv6`: Resolves to command `show bgp ipv6 unicast {prefix}` and pager `terminal length 0`.
   - `juniper` / `juniper_ipv4` / `juniper_ipv6`: Resolves to command `show route protocol bgp {prefix}` and pager `set cli screen-length 0`.
+  - `alice`: Queries Alice-LG HTTP/API telemetry endpoint `/api/v1/lookup/prefix?q={prefix}` directly (performs clean JSON parsing of AS paths).
 - `cmd_template`: (Optional) Custom BGP command to send. Overrides `template`. Useful for other vendors.
 - `pager_cmd`: (Optional) Custom command to disable pagination/more prompts. Overrides `template`.
 
