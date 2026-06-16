@@ -65,11 +65,6 @@ host = "lg.netnod.se"
 template = "alice"
 
 [[looking_glasses]]
-name = "Megaport IX"
-host = "lg.megaport.com"
-template = "alice"
-
-[[looking_glasses]]
 name = "NINE IX"
 host = "lg.nine-ix.net"
 template = "alice"
