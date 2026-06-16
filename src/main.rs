@@ -252,6 +252,99 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
     })
 }
 
+async fn query_alice_lg(lg: LookingGlassConfig, prefix: String, target_origin: u32) -> QueryResult {
+    let client = match reqwest::Client::builder()
+        .timeout(Duration::from_secs(10))
+        .build() {
+            Ok(c) => c,
+            Err(e) => return QueryResult {
+                lg_name: lg.name,
+                as_paths: Vec::new(),
+                error: Some(format!("Failed to build HTTP client: {}", e)),
+            }
+        };
+
+    let url = format!("https://{}/api/v1/lookup/prefix?q={}", lg.host, prefix);
+    let res = match client.get(&url).send().await {
+        Ok(r) => r,
+        Err(e) => {
+            // Try fallback to http
+            let http_url = format!("http://{}/api/v1/lookup/prefix?q={}", lg.host, prefix);
+            match client.get(&http_url).send().await {
+                Ok(r) => r,
+                Err(err) => {
+                    return QueryResult {
+                        lg_name: lg.name,
+                        as_paths: Vec::new(),
+                        error: Some(format!("HTTP error: {} (HTTPS error: {})", err, e)),
+                    }
+                }
+            }
+        }
+    };
+
+    if !res.status().is_success() {
+        return QueryResult {
+            lg_name: lg.name,
+            as_paths: Vec::new(),
+            error: Some(format!("HTTP status error: {}", res.status())),
+        };
+    }
+
+    #[derive(serde::Deserialize)]
+    struct AliceBgp {
+        as_path: Option<Vec<u32>>,
+    }
+
+    #[derive(serde::Deserialize)]
+    struct AliceRoute {
+        bgp: Option<AliceBgp>,
+    }
+
+    #[derive(serde::Deserialize)]
+    struct AliceImported {
+        routes: Option<Vec<AliceRoute>>,
+    }
+
+    #[derive(serde::Deserialize)]
+    struct AliceLookupResponse {
+        imported: Option<AliceImported>,
+    }
+
+    let response_data: AliceLookupResponse = match res.json().await {
+        Ok(json) => json,
+        Err(e) => return QueryResult {
+            lg_name: lg.name,
+            as_paths: Vec::new(),
+            error: Some(format!("JSON parsing error: {}", e)),
+        }
+    };
+
+    let mut paths = Vec::new();
+    if let Some(imported) = response_data.imported {
+        if let Some(routes) = imported.routes {
+            for route in routes {
+                if let Some(bgp) = route.bgp {
+                    if let Some(as_path) = bgp.as_path {
+                        if !as_path.is_empty() && as_path.last() == Some(&target_origin) {
+                            paths.push(as_path);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    paths.sort();
+    paths.dedup();
+
+    QueryResult {
+        lg_name: lg.name,
+        as_paths: paths,
+        error: None,
+    }
+}
+
 fn print_banner() {
     let version = env!("CARGO_PKG_VERSION");
     println!("{}", BANNER.cyan());
@@ -297,7 +390,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let prefix = args.prefix.clone();
         let target_origin = args.asn_mitigated;
         futures.push(task::spawn(async move {
-            query_telnet_lg(lg, prefix, target_origin).await
+            if lg.template.as_deref() == Some("alice") {
+                query_alice_lg(lg, prefix, target_origin).await
+            } else {
+                query_telnet_lg(lg, prefix, target_origin).await
+            }
         }));
     }
 

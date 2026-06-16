@@ -38,3 +38,68 @@ host = "route-server.as3257.net"
 username = "public"
 password = "public"
 template = "juniper"
+
+[[looking_glasses]]
+name = "DE-CIX"
+host = "lg.de-cix.net"
+template = "alice"
+
+[[looking_glasses]]
+name = "LINX"
+host = "alice-rs.linx.net"
+template = "alice"
+
+[[looking_glasses]]
+name = "JEDIX"
+host = "alice-rs-jedix.linx.net"
+template = "alice"
+
+[[looking_glasses]]
+name = "LINX Collectors"
+host = "alice-collector.linx.net"
+template = "alice"
+
+[[looking_glasses]]
+name = "Netnod"
+host = "lg.netnod.se"
+template = "alice"
+
+[[looking_glasses]]
+name = "Megaport IX"
+host = "lg.megaport.com"
+template = "alice"
+
+[[looking_glasses]]
+name = "NINE IX"
+host = "lg.nine-ix.net"
+template = "alice"
+
+[[looking_glasses]]
+name = "SFMIX"
+host = "alice.sfmix.org"
+template = "alice"
+
+[[looking_glasses]]
+name = "GigaPIX"
+host = "glass.gigapix.pt"
+template = "alice"
+
+[[looking_glasses]]
+name = "IIX Indonesia"
+host = "lg.iix.net.id"
+template = "alice"
+
+[[looking_glasses]]
+name = "DataIX"
+host = "lg.dataix.ru"
+template = "alice"
+
+[[looking_glasses]]
+name = "Digital Realty IX"
+host = "lg.ix-access.digitalrealty.com"
+template = "alice"
+
+[[looking_glasses]]
+name = "GNM-IX"
+host = "lg.gnm-ix.net"
+template = "alice"
