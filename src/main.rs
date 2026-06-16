@@ -252,119 +252,65 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
     })
 }
 
-async fn query_alice_lg(lg: LookingGlassConfig, prefix: String, target_origin: u32) -> QueryResult {
+#[derive(serde::Deserialize, Clone, Debug)]
+struct AliceBgp {
+    as_path: Option<Vec<u32>>,
+}
+
+#[derive(serde::Deserialize, Clone, Debug)]
+struct AliceRouteServer {
+    name: Option<String>,
+}
+
+#[derive(serde::Deserialize, Clone, Debug)]
+struct AliceRoute {
+    bgp: Option<AliceBgp>,
+    routeserver: Option<AliceRouteServer>,
+}
+
+#[derive(serde::Deserialize, Clone, Debug)]
+struct AliceImported {
+    routes: Option<Vec<AliceRoute>>,
+}
+
+#[derive(serde::Deserialize, Clone, Debug)]
+struct AliceLookupResponse {
+    imported: Option<AliceImported>,
+}
+
+async fn fetch_alice_routes(host: String, prefix: String) -> Result<Vec<AliceRoute>, String> {
     let client = match reqwest::Client::builder()
-        .timeout(Duration::from_secs(10))
+        .timeout(Duration::from_secs(15))
         .build() {
             Ok(c) => c,
-            Err(e) => return QueryResult {
-                lg_name: lg.name,
-                as_paths: Vec::new(),
-                error: Some(format!("Failed to build HTTP client: {}", e)),
-            }
+            Err(e) => return Err(format!("Failed to build HTTP client: {}", e)),
         };
 
-    let url = format!("https://{}/api/v1/lookup/prefix?q={}", lg.host, prefix);
+    let url = format!("https://{}/api/v1/lookup/prefix?q={}", host, prefix);
     let res = match client.get(&url).send().await {
         Ok(r) => r,
         Err(e) => {
             // Try fallback to http
-            let http_url = format!("http://{}/api/v1/lookup/prefix?q={}", lg.host, prefix);
+            let http_url = format!("http://{}/api/v1/lookup/prefix?q={}", host, prefix);
             match client.get(&http_url).send().await {
                 Ok(r) => r,
                 Err(err) => {
-                    return QueryResult {
-                        lg_name: lg.name,
-                        as_paths: Vec::new(),
-                        error: Some(format!("HTTP error: {} (HTTPS error: {})", err, e)),
-                    }
+                    return Err(format!("HTTP error: {} (HTTPS error: {})", err, e));
                 }
             }
         }
     };
 
     if !res.status().is_success() {
-        return QueryResult {
-            lg_name: lg.name,
-            as_paths: Vec::new(),
-            error: Some(format!("HTTP status error: {}", res.status())),
-        };
-    }
-
-    #[derive(serde::Deserialize)]
-    struct AliceBgp {
-        as_path: Option<Vec<u32>>,
-    }
-
-    #[derive(serde::Deserialize)]
-    struct AliceRouteServer {
-        name: Option<String>,
-    }
-
-    #[derive(serde::Deserialize)]
-    struct AliceRoute {
-        bgp: Option<AliceBgp>,
-        routeserver: Option<AliceRouteServer>,
-    }
-
-    #[derive(serde::Deserialize)]
-    struct AliceImported {
-        routes: Option<Vec<AliceRoute>>,
-    }
-
-    #[derive(serde::Deserialize)]
-    struct AliceLookupResponse {
-        imported: Option<AliceImported>,
+        return Err(format!("HTTP status error: {}", res.status()));
     }
 
     let response_data: AliceLookupResponse = match res.json().await {
         Ok(json) => json,
-        Err(e) => return QueryResult {
-            lg_name: lg.name,
-            as_paths: Vec::new(),
-            error: Some(format!("JSON parsing error: {}", e)),
-        }
+        Err(e) => return Err(format!("JSON parsing error: {}", e)),
     };
 
-    let mut paths = Vec::new();
-    if let Some(imported) = response_data.imported {
-        if let Some(routes) = imported.routes {
-            for route in routes {
-                let matches_routeserver = if lg.host == "lg.ix.br" {
-                    if let Some(ref rs) = route.routeserver {
-                        if let Some(ref rs_name) = rs.name {
-                            lg.name.trim().to_lowercase() == rs_name.trim().to_lowercase()
-                        } else {
-                            false
-                        }
-                    } else {
-                        false
-                    }
-                } else {
-                    true
-                };
-
-                if matches_routeserver {
-                    if let Some(bgp) = route.bgp {
-                        if let Some(as_path) = bgp.as_path {
-                            if !as_path.is_empty() && as_path.last() == Some(&target_origin) {
-                                paths.push(as_path);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    paths.sort();
-    paths.dedup();
-
-    QueryResult {
-        lg_name: lg.name,
-        as_paths: paths,
-        error: None,
-    }
+    Ok(response_data.imported.and_then(|imp| imp.routes).unwrap_or_default())
 }
 
 fn print_banner() {
@@ -404,6 +350,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
+    // 1. Identify all unique Alice-LG hosts and fetch their route lookups first to prevent rate limiting (429)
+    let mut alice_hosts: Vec<String> = config.looking_glasses.iter()
+        .filter(|lg| lg.template.as_deref() == Some("alice"))
+        .map(|lg| lg.host.clone())
+        .collect();
+    alice_hosts.sort();
+    alice_hosts.dedup();
+
+    let mut alice_futures = Vec::new();
+    for host in alice_hosts {
+        let prefix = args.prefix.clone();
+        alice_futures.push(task::spawn(async move {
+            let res = fetch_alice_routes(host.clone(), prefix).await;
+            (host, res)
+        }));
+    }
+
+    let alice_results_raw = futures_util::future::join_all(alice_futures).await;
+    let mut alice_cache = std::collections::HashMap::new();
+    for item in alice_results_raw {
+        if let Ok((host, res)) = item {
+            alice_cache.insert(host, res);
+        }
+    }
+
     println!("Initiating concurrent Looking Glass checks on {} servers...", config.looking_glasses.len().to_string().cyan());
 
     // Create parallel tasks for each Looking Glass configured in config.toml
@@ -411,13 +382,65 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     for lg in config.looking_glasses {
         let prefix = args.prefix.clone();
         let target_origin = args.asn_mitigated;
-        futures.push(task::spawn(async move {
-            if lg.template.as_deref() == Some("alice") {
-                query_alice_lg(lg, prefix, target_origin).await
-            } else {
+
+        if lg.template.as_deref() == Some("alice") {
+            let cached_res = alice_cache.get(&lg.host).cloned();
+            futures.push(task::spawn(async move {
+                let routes = match cached_res {
+                    Some(Ok(r)) => r,
+                    Some(Err(e)) => return QueryResult {
+                        lg_name: lg.name,
+                        as_paths: Vec::new(),
+                        error: Some(e),
+                    },
+                    None => return QueryResult {
+                        lg_name: lg.name,
+                        as_paths: Vec::new(),
+                        error: Some("Host result not cached".to_string()),
+                    }
+                };
+
+                let mut paths = Vec::new();
+                for route in routes {
+                    let matches_routeserver = if lg.host == "lg.ix.br" {
+                        if let Some(ref rs) = route.routeserver {
+                            if let Some(ref rs_name) = rs.name {
+                                lg.name.trim().to_lowercase() == rs_name.trim().to_lowercase()
+                            } else {
+                                false
+                            }
+                        } else {
+                            false
+                        }
+                    } else {
+                        true
+                    };
+
+                    if matches_routeserver {
+                        if let Some(bgp) = route.bgp {
+                            if let Some(as_path) = bgp.as_path {
+                                if !as_path.is_empty() && as_path.last() == Some(&target_origin) {
+                                    paths.push(as_path);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                paths.sort();
+                paths.dedup();
+
+                QueryResult {
+                    lg_name: lg.name,
+                    as_paths: paths,
+                    error: None,
+                }
+            }));
+        } else {
+            futures.push(task::spawn(async move {
                 query_telnet_lg(lg, prefix, target_origin).await
-            }
-        }));
+            }));
+        }
     }
 
     // Await all futures concurrently
