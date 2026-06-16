@@ -297,8 +297,14 @@ async fn query_alice_lg(lg: LookingGlassConfig, prefix: String, target_origin: u
     }
 
     #[derive(serde::Deserialize)]
+    struct AliceRouteServer {
+        name: Option<String>,
+    }
+
+    #[derive(serde::Deserialize)]
     struct AliceRoute {
         bgp: Option<AliceBgp>,
+        routeserver: Option<AliceRouteServer>,
     }
 
     #[derive(serde::Deserialize)]
@@ -324,10 +330,26 @@ async fn query_alice_lg(lg: LookingGlassConfig, prefix: String, target_origin: u
     if let Some(imported) = response_data.imported {
         if let Some(routes) = imported.routes {
             for route in routes {
-                if let Some(bgp) = route.bgp {
-                    if let Some(as_path) = bgp.as_path {
-                        if !as_path.is_empty() && as_path.last() == Some(&target_origin) {
-                            paths.push(as_path);
+                let matches_routeserver = if lg.host == "lg.ix.br" {
+                    if let Some(ref rs) = route.routeserver {
+                        if let Some(ref rs_name) = rs.name {
+                            lg.name.trim().to_lowercase() == rs_name.trim().to_lowercase()
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+                } else {
+                    true
+                };
+
+                if matches_routeserver {
+                    if let Some(bgp) = route.bgp {
+                        if let Some(as_path) = bgp.as_path {
+                            if !as_path.is_empty() && as_path.last() == Some(&target_origin) {
+                                paths.push(as_path);
+                            }
                         }
                     }
                 }
