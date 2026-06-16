@@ -31,3 +31,10 @@ host = "route-server.ip.att.net"
 username = "rviews"
 password = "rviews"
 template = "juniper"
+
+[[looking_glasses]]
+name = "GTT Route Server"
+host = "route-server.as3257.net"
+username = "public"
+password = "public"
+template = "juniper"

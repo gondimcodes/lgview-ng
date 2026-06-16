@@ -166,8 +166,9 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
                 match read_nonblocking_negotiate(&mut telnet_client) {
                     Ok(Some(data)) => {
                         buffer.extend_from_slice(&data);
-                        let current_str = String::from_utf8_lossy(&buffer).to_lowercase();
-                        if current_str.contains("username:") || current_str.contains("login:") {
+                        let current_str = String::from_utf8_lossy(&buffer);
+                        let trimmed = current_str.trim_end().to_lowercase();
+                        if trimmed.ends_with("username:") || trimmed.ends_with("login:") {
                             prompt_found = true;
                             break;
                         }
@@ -195,8 +196,9 @@ async fn query_telnet_lg(lg: LookingGlassConfig, prefix: String, target_origin: 
                 match read_nonblocking_negotiate(&mut telnet_client) {
                     Ok(Some(data)) => {
                         buffer.extend_from_slice(&data);
-                        let current_str = String::from_utf8_lossy(&buffer).to_lowercase();
-                        if current_str.contains("password:") {
+                        let current_str = String::from_utf8_lossy(&buffer);
+                        let trimmed = current_str.trim_end().to_lowercase();
+                        if trimmed.ends_with("password:") {
                             prompt_found = true;
                             break;
                         }
