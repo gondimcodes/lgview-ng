@@ -83,6 +83,7 @@ template = "alice"
 name = "GNM-IX"
 host = "lg.gnm-ix.net"
 template = "alice"
+
 [[looking_glasses]]
 name = "rs1.saopaulo.sp.ix.br (IPv4)"
 host = "lg.ix.br"
