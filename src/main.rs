@@ -405,9 +405,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let matches_routeserver = if lg.host == "lg.ix.br" {
                         if let Some(ref rs) = route.routeserver {
                             if let Some(ref rs_name) = rs.name {
-                                let clean_lg = lg.name.replace("(IPv4)", "").replace("(IPv6)", "").replace("(ipv4)", "").replace("(ipv6)", "").trim().to_lowercase();
-                                let clean_rs = rs_name.replace("(IPv4)", "").replace("(IPv6)", "").replace("(ipv4)", "").replace("(ipv6)", "").trim().to_lowercase();
-                                clean_lg == clean_rs
+                                lg.name.trim().to_lowercase() == rs_name.trim().to_lowercase()
                             } else {
                                 false
                             }

@@ -84,392 +84,782 @@ name = "GNM-IX"
 host = "lg.gnm-ix.net"
 template = "alice"
 [[looking_glasses]]
-name = "rs1.saopaulo.sp.ix.br"
+name = "rs1.saopaulo.sp.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.saopaulo.sp.ix.br"
+name = "rs1.saopaulo.sp.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.riodejaneiro.rj.ix.br"
+name = "rs2.saopaulo.sp.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.riodejaneiro.rj.ix.br"
+name = "rs2.saopaulo.sp.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.fortaleza.ce.ix.br"
+name = "rs1.riodejaneiro.rj.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.fortaleza.ce.ix.br"
+name = "rs1.riodejaneiro.rj.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.aracaju.se.ix.br"
+name = "rs2.riodejaneiro.rj.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.aracaju.se.ix.br"
+name = "rs2.riodejaneiro.rj.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.belem.pa.ix.br"
+name = "rs1.fortaleza.ce.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.belem.pa.ix.br"
+name = "rs1.fortaleza.ce.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.belohorizonte.mg.ix.br"
+name = "rs2.fortaleza.ce.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.belohorizonte.mg.ix.br"
+name = "rs2.fortaleza.ce.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.boavista.rr.ix.br"
+name = "rs1.aracaju.se.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.boavista.rr.ix.br"
+name = "rs1.aracaju.se.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.brasilia.df.ix.br"
+name = "rs2.aracaju.se.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.brasilia.df.ix.br"
+name = "rs2.aracaju.se.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.caruaru.pe.ix.br"
+name = "rs1.belem.pa.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.caruaru.pe.ix.br"
+name = "rs1.belem.pa.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.cascavel.pr.ix.br"
+name = "rs2.belem.pa.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.cascavel.pr.ix.br"
+name = "rs2.belem.pa.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.campinagrande.pb.ix.br"
+name = "rs1.belohorizonte.mg.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.campinagrande.pb.ix.br"
+name = "rs1.belohorizonte.mg.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.campinas.sp.ix.br"
+name = "rs2.belohorizonte.mg.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.campinas.sp.ix.br"
+name = "rs2.belohorizonte.mg.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.campogrande.ms.ix.br"
+name = "rs1.boavista.rr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.campogrande.ms.ix.br"
+name = "rs1.boavista.rr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.caxiasdosul.rs.ix.br"
+name = "rs2.boavista.rr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.caxiasdosul.rs.ix.br"
+name = "rs2.boavista.rr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.cuiaba.mt.ix.br"
+name = "rs1.brasilia.df.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.cuiaba.mt.ix.br"
+name = "rs1.brasilia.df.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.curitiba.pr.ix.br"
+name = "rs2.brasilia.df.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.curitiba.pr.ix.br"
+name = "rs2.brasilia.df.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.feiradesantana.ba.ix.br"
+name = "rs1.caruaru.pe.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.feiradesantana.ba.ix.br"
+name = "rs1.caruaru.pe.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.florianopolis.sc.ix.br"
+name = "rs2.caruaru.pe.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.florianopolis.sc.ix.br"
+name = "rs2.caruaru.pe.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.fozdoiguacu.pr.ix.br"
+name = "rs1.cascavel.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.fozdoiguacu.pr.ix.br"
+name = "rs1.cascavel.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.goiania.go.ix.br"
+name = "rs2.cascavel.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.goiania.go.ix.br"
+name = "rs2.cascavel.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.joaopessoa.pb.ix.br"
+name = "rs1.campinagrande.pb.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.joaopessoa.pb.ix.br"
+name = "rs1.campinagrande.pb.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.lajeado.rs.ix.br"
+name = "rs2.campinagrande.pb.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.lajeado.rs.ix.br"
+name = "rs2.campinagrande.pb.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.londrina.pr.ix.br"
+name = "rs1.campinas.sp.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.londrina.pr.ix.br"
+name = "rs1.campinas.sp.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.maceio.al.ix.br"
+name = "rs2.campinas.sp.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.maceio.al.ix.br"
+name = "rs2.campinas.sp.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.manaus.am.ix.br"
+name = "rs1.campogrande.ms.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.manaus.am.ix.br"
+name = "rs1.campogrande.ms.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.maringa.pr.ix.br"
+name = "rs2.campogrande.ms.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.maringa.pr.ix.br"
+name = "rs2.campogrande.ms.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.natal.rn.ix.br"
+name = "rs1.caxiasdosul.rs.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.natal.rn.ix.br"
+name = "rs1.caxiasdosul.rs.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.palmas.to.ix.br"
+name = "rs2.caxiasdosul.rs.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.palmas.to.ix.br"
+name = "rs2.caxiasdosul.rs.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.portoalegre.rs.ix.br"
+name = "rs1.cuiaba.mt.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.portoalegre.rs.ix.br"
+name = "rs1.cuiaba.mt.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.portovelho.ro.ix.br"
+name = "rs2.cuiaba.mt.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.portovelho.ro.ix.br"
+name = "rs2.cuiaba.mt.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.recife.pe.ix.br"
+name = "rs1.curitiba.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.recife.pe.ix.br"
+name = "rs1.curitiba.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.ribeiraopreto.sp.ix.br"
+name = "rs2.curitiba.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.ribeiraopreto.sp.ix.br"
+name = "rs2.curitiba.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.riobranco.ac.ix.br"
+name = "rs1.feiradesantana.ba.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.riobranco.ac.ix.br"
+name = "rs1.feiradesantana.ba.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.salvador.ba.ix.br"
+name = "rs2.feiradesantana.ba.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.salvador.ba.ix.br"
+name = "rs2.feiradesantana.ba.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.santamaria.rs.ix.br"
+name = "rs1.florianopolis.sc.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.santamaria.rs.ix.br"
+name = "rs1.florianopolis.sc.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.sjoseriopreto.sp.ix.br"
+name = "rs2.florianopolis.sc.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.sjoseriopreto.sp.ix.br"
+name = "rs2.florianopolis.sc.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.saoluis.ma.ix.br"
+name = "rs1.fozdoiguacu.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.saoluis.ma.ix.br"
+name = "rs1.fozdoiguacu.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.teresina.pi.ix.br"
+name = "rs2.fozdoiguacu.pr.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.teresina.pi.ix.br"
+name = "rs2.fozdoiguacu.pr.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs1.vitoria.es.ix.br"
+name = "rs1.goiania.go.ix.br (IPv4)"
 host = "lg.ix.br"
 template = "alice"
 
 [[looking_glasses]]
-name = "rs2.vitoria.es.ix.br"
+name = "rs1.goiania.go.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.goiania.go.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.goiania.go.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.joaopessoa.pb.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.joaopessoa.pb.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.joaopessoa.pb.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.joaopessoa.pb.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.lajeado.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.lajeado.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.lajeado.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.lajeado.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.londrina.pr.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.londrina.pr.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.londrina.pr.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.londrina.pr.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.maceio.al.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.maceio.al.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.maceio.al.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.maceio.al.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.manaus.am.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.manaus.am.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.manaus.am.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.manaus.am.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.maringa.pr.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.maringa.pr.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.maringa.pr.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.maringa.pr.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.natal.rn.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.natal.rn.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.natal.rn.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.natal.rn.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.palmas.to.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.palmas.to.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.palmas.to.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.palmas.to.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.portoalegre.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.portoalegre.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.portoalegre.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.portoalegre.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.portovelho.ro.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.portovelho.ro.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.portovelho.ro.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.portovelho.ro.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.recife.pe.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.recife.pe.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.recife.pe.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.recife.pe.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.ribeiraopreto.sp.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.ribeiraopreto.sp.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.ribeiraopreto.sp.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.ribeiraopreto.sp.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.riobranco.ac.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.riobranco.ac.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.riobranco.ac.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.riobranco.ac.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.salvador.ba.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.salvador.ba.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.salvador.ba.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.salvador.ba.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.santamaria.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.santamaria.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.santamaria.rs.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.santamaria.rs.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.sjoseriopreto.sp.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.sjoseriopreto.sp.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.sjoseriopreto.sp.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.sjoseriopreto.sp.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.saoluis.ma.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.saoluis.ma.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.saoluis.ma.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.saoluis.ma.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.teresina.pi.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.teresina.pi.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.teresina.pi.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.teresina.pi.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.vitoria.es.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs1.vitoria.es.ix.br (IPv6)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.vitoria.es.ix.br (IPv4)"
+host = "lg.ix.br"
+template = "alice"
+
+[[looking_glasses]]
+name = "rs2.vitoria.es.ix.br (IPv6)"
 host = "lg.ix.br"
 template = "alice"
 
