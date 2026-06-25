@@ -1,6 +1,6 @@
 [package]
 name = "lgview-ng"
-version = "1.4.2"
+version = "1.5.0"
 edition = "2024"
 authors = ["Gondim <gondimcodes@gmail.com>"]
 description = "Check for BGP prefix leaks in DDoS mitigation setups using real-time Telnet Looking Glass servers"
@@ -12,7 +12,7 @@ readme = "README.md"
 clap = { version = "4.4", features = ["derive"] }
 tokio = { version = "1.35", features = ["full"] }
 telnet = "0.2"
-regex = "1"
+serde_json = "1"
 colored = "2.1"
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.8"
