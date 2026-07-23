@@ -2,6 +2,10 @@
 
 This guide outlines how to build and install **lgview-ng** from source.
 
+## Pre-compiled Binaries
+
+If you are on Linux x86_64, you can skip compiling from source and download pre-compiled release binaries directly from the **Versões (Releases)** page on [Codeberg](https://codeberg.org/gondim/lgview-ng/releases).
+
 ## Prerequisites
 
 To build and run `lgview-ng`, you must have Rust and Cargo installed on your system.
