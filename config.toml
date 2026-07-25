@@ -86,243 +86,243 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.saopaulo.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.saopaulo.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.saopaulo.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.saopaulo.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.riodejaneiro.rj.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.riodejaneiro.rj.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.riodejaneiro.rj.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.riodejaneiro.rj.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.riodejaneiro.rj.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.riodejaneiro.rj.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.riodejaneiro.rj.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.riodejaneiro.rj.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.fortaleza.ce.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.fortaleza.ce.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.fortaleza.ce.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.fortaleza.ce.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.fortaleza.ce.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.fortaleza.ce.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.fortaleza.ce.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.fortaleza.ce.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.aracaju.se.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.aracaju.se.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.aracaju.se.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.aracaju.se.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.aracaju.se.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.aracaju.se.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.aracaju.se.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.aracaju.se.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.belem.pa.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.belem.pa.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.belem.pa.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.belem.pa.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.belem.pa.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.belem.pa.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.belem.pa.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.belem.pa.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.belohorizonte.mg.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.mg.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.belohorizonte.mg.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.mg.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.belohorizonte.mg.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.mg.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.belohorizonte.mg.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.mg.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.boavista.rr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.boavista.rr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.boavista.rr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.boavista.rr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.brasilia.df.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.df.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.brasilia.df.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.df.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.brasilia.df.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.df.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.brasilia.df.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.df.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.caruaru.pe.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pe.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.caruaru.pe.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pe.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.caruaru.pe.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pe.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.caruaru.pe.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pe.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.cascavel.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.cascavel.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.cascavel.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.cascavel.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.campinagrande.pb.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinagrande.pb.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.campinagrande.pb.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinagrande.pb.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.campinagrande.pb.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinagrande.pb.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.campinagrande.pb.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinagrande.pb.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.campinas.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinas.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.campinas.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinas.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.campinas.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinas.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.campinas.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.campinas.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.campogrande.ms.ix.br (IPv4)"
@@ -346,103 +346,103 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.caxiasdosul.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.caxiasdosul.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.caxiasdosul.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.caxiasdosul.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.caxiasdosul.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.caxiasdosul.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.caxiasdosul.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.caxiasdosul.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.cuiaba.mt.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.cuiaba.mt.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.cuiaba.mt.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.cuiaba.mt.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.cuiaba.mt.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.cuiaba.mt.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.cuiaba.mt.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.cuiaba.mt.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.curitiba.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.curitiba.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.curitiba.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.curitiba.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.feiradesantana.ba.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.feiradesantana.ba.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.feiradesantana.ba.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.feiradesantana.ba.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.florianopolis.sc.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sc.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.florianopolis.sc.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sc.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.florianopolis.sc.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sc.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.florianopolis.sc.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sc.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.fozdoiguacu.pr.ix.br (IPv4)"
@@ -466,23 +466,23 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.goiania.go.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.goiania.go.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.goiania.go.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.goiania.go.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.goiania.go.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.goiania.go.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.goiania.go.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.goiania.go.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.joaopessoa.pb.ix.br (IPv4)"
@@ -506,43 +506,43 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.lajeado.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.lajeado.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.lajeado.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.lajeado.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.lajeado.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.lajeado.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.lajeado.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.lajeado.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.londrina.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.londrina.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.londrina.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.londrina.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.maceio.al.ix.br (IPv4)"
@@ -566,163 +566,163 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.manaus.am.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.manaus.am.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.manaus.am.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.manaus.am.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.manaus.am.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.manaus.am.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.manaus.am.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.manaus.am.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.maringa.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.maringa.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.maringa.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.maringa.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.maringa.pr.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.maringa.pr.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.maringa.pr.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.maringa.pr.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.natal.rn.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.natal.rn.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.natal.rn.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.natal.rn.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.natal.rn.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.natal.rn.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.natal.rn.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.natal.rn.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.palmas.to.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.to.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.palmas.to.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.to.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.palmas.to.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.to.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.palmas.to.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.to.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.portoalegre.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.portoalegre.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.portoalegre.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.portoalegre.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.portovelho.ro.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ro.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.portovelho.ro.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ro.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.portovelho.ro.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ro.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.portovelho.ro.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ro.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.recife.pe.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.recife.pe.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.recife.pe.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.recife.pe.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.recife.pe.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.recife.pe.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.recife.pe.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.recife.pe.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.ribeiraopreto.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.ribeiraopreto.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.ribeiraopreto.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.ribeiraopreto.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.riobranco.ac.ix.br (IPv4)"
@@ -746,63 +746,63 @@ template = "alice"
 
 [[looking_glasses]]
 name = "rs1.salvador.ba.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.salvador.ba.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.salvador.ba.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.salvador.ba.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.ba.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.santamaria.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.santamaria.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.santamaria.rs.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.santamaria.rs.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.rs.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.sjoseriopreto.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sjoseriopreto.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs1.sjoseriopreto.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sjoseriopreto.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs2.sjoseriopreto.sp.ix.br (IPv4)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sjoseriopreto.sp.ix.br"
+template = "cisco"
 
 [[looking_glasses]]
 name = "rs2.sjoseriopreto.sp.ix.br (IPv6)"
-host = "lg.ix.br"
-template = "alice"
+host = "lg.sjoseriopreto.sp.ix.br"
+template = "cisco_ipv6"
 
 [[looking_glasses]]
 name = "rs1.saoluis.ma.ix.br (IPv4)"
