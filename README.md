@@ -141,4 +141,4 @@ Visit [ISP Focus](https://ispfocus.net.br) for network consulting and consulting
 This repository supports build and test automation via **Woodpecker CI** hosted on Codeberg:
 
 * **Continuous Integration (CI):** On every `push` or `pull_request` sent to the `main` branch, the complete test suite is executed automatically (with parallelism limited to `-j 1` to respect Codeberg's shared resource guidelines).
-* **Continuous Delivery (CD):** When creating and pushing a version tag (e.g., `v1.5.0`), the pipeline compiles the binary (`lgview-ng`) in production mode (Release) for Linux x86_64, compresses it into a `.tar.gz` file, and attaches the final file directly to the Releases page on Codeberg.
+* **Continuous Delivery (CD):** When creating and pushing a version tag (e.g., `v1.5.2`), the pipeline compiles the binary (`lgview-ng`) in production mode (Release) for Linux x86_64, compresses it into a `.tar.gz` file, and attaches the final file directly to the Releases page on Codeberg.
